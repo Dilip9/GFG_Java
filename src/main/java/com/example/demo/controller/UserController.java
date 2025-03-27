@@ -62,9 +62,6 @@ public class UserController implements InitializingBean {
      *                 -> POST
      *                 -> PATCH
      *
-     *
-     *
-     *
      */
 
     // in memory db
@@ -98,15 +95,12 @@ public class UserController implements InitializingBean {
      * Get Mapping
      *          --> GET
      *                  --> fetches data from repository / data source / hashmap in our case
-     *
      * @return
      */
     @GetMapping(name = "{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-// older way    @RequestMapping("/helloWorld", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE )
     public ResponseEntity<UserInfo> findUserInfoById(@PathVariable("id") String id){
         UserInfo userInfo = userIdToUserInfo.get(id);
         if(Objects.isNull(userInfo)){
-//            return new ResponseEntity<UserInfo>(HttpStatus.NOT_FOUND);
             return new ResponseEntity<UserInfo>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<UserInfo>(userInfo, HttpStatus.OK);
@@ -115,7 +109,6 @@ public class UserController implements InitializingBean {
 
 
     @PostMapping(name = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-// older way    @RequestMapping("/helloWorld", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE )
     public ResponseEntity<UserInfo> insertUser(@RequestBody UserInfo userInfo){
         UserInfo persistedUser = userIdToUserInfo.get(userInfo.getId());
         if(Objects.nonNull(persistedUser)){
@@ -133,7 +126,6 @@ public class UserController implements InitializingBean {
             return new ResponseEntity<UserInfo>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<UserInfo>(persistedUser,HttpStatus.OK);
-//        return new ResponseEntity<UserInfo>(HttpStatus.NO_CONTENT);
     }
 
 
@@ -164,22 +156,15 @@ public class UserController implements InitializingBean {
 
 
     /**
-     *
-     *
-     *
-     *      ----> server 1      --->                             -                                       --------\\                  idempotencyKeyToPresent(12345, proceseed)
+     *      ----> server 1      --->          -            --------\\                  idempotencyKeyToPresent(12345, proceseed)
      *                                                                                                          \\      DB
-     *                                                                                                          //
-     *      ---> server 2       --->                                                                   --------//
+     *      ---> server 2       --->                 --------//
      *
      *
      * @param hit
      * @param opponentId
      * @param idempotencyKey
      */
-
-
-
     public void server1(int hit, String opponentId, String idempotencyKey){
         // get current health of opponent --> get it from DB
         Boolean isFound = idempotencyKeyToPresent.getOrDefault(idempotencyKey, false);
